@@ -122,15 +122,15 @@ public:
   // Standard MRML node methods
   static vtkMRMLWorkspaceGenerationNode* New();
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
-  virtual const char*  GetNodeTagName() VTK_OVERRIDE
+  virtual vtkMRMLNode* CreateNodeInstance() ITK_OVERRIDE;
+  virtual const char*  GetNodeTagName() ITK_OVERRIDE
   {
     return "WorkspaceGeneration";
   };
-  void         PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
-  virtual void ReadXMLAttributes(const char** atts) VTK_OVERRIDE;
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
-  virtual void Copy(vtkMRMLNode* node) VTK_OVERRIDE;
+  void         PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE;
+  virtual void ReadXMLAttributes(const char** atts) ITK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) ITK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode* node) ITK_OVERRIDE;
 
   vtkGetMacro(AutoUpdateOutput, bool);
   vtkSetMacro(AutoUpdateOutput, bool);
@@ -184,7 +184,7 @@ public:
   void SetAndObserveEntryPointNodeId(const char* entryPointNodeId);
   void SetAndObserveTargetPointNodeId(const char* targetPointNodeId);
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event,
-                         void* callData) VTK_OVERRIDE;
+                         void* callData) ITK_OVERRIDE;
 
   vtkMRMLVolumeNode*          GetInputVolumeNode();
   vtkMRMLAnnotationROINode*   GetAnnotationROINode();
