@@ -4,7 +4,7 @@ project(SlicerAIM_MRIRobot)
 
 #-----------------------------------------------------------------------------
 # Debug flags
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # does not produce the json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "") # works
 
