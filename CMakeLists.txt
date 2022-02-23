@@ -37,6 +37,8 @@ set(EXTENSION_DEPENDS "") # Specified as a list or "NA" if no dependencies
 # Extension modules
 add_subdirectory(Utilities)
 add_subdirectory(NeuroRobot)
+add_subdirectory(workspace_mesh_gen)
+
 set(NeuroRobot_DIR ${CMAKE_BINARY_DIR}/NeuroRobot/CMakeFiles/Export/cmake/)
 
 # set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/)

@@ -89,11 +89,13 @@
 #include <itkLabelObject.h>
 #include <itkNiftiImageIO.h>
 
+#include "../../workspace_mesh_gen/workspace_mesh_gen.hpp"
 #include <PointSetUtilities/PointSetUtilities.hpp>
 
 class qSlicerAbstractCoreModule;
 class vtkSlicerVolumeRenderingLogic;
 class vtkMRMLVolumeRenderingDisplayNode;
+class WorkspaceMeshGen;
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerWorkspaceGenerationLogic);
@@ -1075,7 +1077,8 @@ vtkMRMLVolumeNode*
   //   this->InputVolumeRenderingDisplayNode, volumeNode);
   // }
 
-  this->AnnotationROINode = this->InputVolumeRenderingDisplayNode->GetROINode();
+  this->AnnotationROINode =
+    this->InputVolumeRenderingDisplayNode->GetAnnotationROINode();
   this->WorkspaceGenerationNode->SetAndObserveAnnotationROINodeID(
     this->AnnotationROINode->GetID());
 
@@ -1152,7 +1155,7 @@ vtkMRMLVolumeNode* vtkSlicerWorkspaceGenerationLogic::RenderVolume(
   //   this->InputVolumeRenderingDisplayNode, volumeNode);
   // }
 
-  annotationROINode = volumeRenderingDisplayNode->GetROINode();
+  annotationROINode = volumeRenderingDisplayNode->GetAnnotationROINode();
   if (annotationROINode == NULL)
   {
     qCritical() << Q_FUNC_INFO << ": Annotation ROI Node is NULL";
@@ -1281,6 +1284,8 @@ bool vtkSlicerWorkspaceGenerationLogic::LoadWorkspaceAsSegmentation(
   auto checkpoint_workspace_gen = std::chrono::high_resolution_clock::now();
   PointSetUtilities utils(workspace);
 
+  WorkspaceMeshGen wsg;
+
   QString input_filename =
     "WorkspaceGeneration/Resources/meshes/" + workspace_name + ".xyz";
   QString output_filename =
@@ -1292,49 +1297,8 @@ bool vtkSlicerWorkspaceGenerationLogic::LoadWorkspaceAsSegmentation(
   QFileInfo mesh_gen_filepath(mesh_generation_script_filename);
   utils.saveToXyz(input_filepath.absoluteFilePath().toUtf8().data());
 
-  // Get environment variable for Meshlab Path
-  // Also set this path in your bashrc, or in the same terminal as this script
-  // export MESHLAB_BIN_DIR=~/meshlab/src/install/usr/bin/ OR
-  // export MESHLAB_BIN_DIR=/usr/bin/ if you have installed it using sudo
-  char* meshlab_dir_path;
-  meshlab_dir_path = getenv("MESHLAB_BIN_DIR");
-
-  if (meshlab_dir_path == NULL)
-  {
-    qCritical() << Q_FUNC_INFO
-                << ": Meshlab dir path is not in the environment";
-  }
-
-  QString meshlab_bin_path(meshlab_dir_path);
-  meshlab_bin_path += "meshlabserver";
-
-  // Calling Meshlab to create a PLY file from the general_workspace.xyz
-  QString generate_ws_command =
-    meshlab_bin_path + QString(" -i ") + input_filepath.absoluteFilePath() +
-    QString(" -o ") + output_filepath.absoluteFilePath() + QString(" -s ") +
-    mesh_gen_filepath.absoluteFilePath() +
-    QString(" 1> meshlab_output.log 2> meshlab_output_err.log");
-
-  qDebug() << Q_FUNC_INFO << ": Command is - " << generate_ws_command;
-
-  std::system(generate_ws_command.toUtf8().data());
-
-  auto checkpoint_meshlab = std::chrono::high_resolution_clock::now();
-
-  auto duration_workspace_gen =
-    std::chrono::duration_cast< std::chrono::microseconds >(
-      checkpoint_workspace_gen - *start);
-
-  auto duration_meshlab_gen =
-    std::chrono::duration_cast< std::chrono::microseconds >(
-      checkpoint_meshlab - checkpoint_workspace_gen);
-
-  qDebug() << Q_FUNC_INFO << ": Time taken to generate workspace = "
-           << duration_workspace_gen.count();
-
-  qDebug() << Q_FUNC_INFO
-           << ": Time taken to run meshlab server in background = "
-           << duration_meshlab_gen.count();
+  wsg.GenerateMesh(input_filepath.absoluteFilePath().toUtf8().data(),
+                   output_filepath.absoluteFilePath().toUtf8().data());
 
   if (this->ModelsLogic != NULL)
   {

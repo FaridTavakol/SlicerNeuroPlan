@@ -18,6 +18,7 @@ set(${KIT}_INCLUDE_DIRECTORIES
   ${utilities_INCLUDE_DIRS}
   ${neurorobot_INCLUDE_DIRS}
   ${nlohmann_json_INCLUDE_DIRS}
+  ${workspace_mesh_gen_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -40,6 +41,7 @@ set(${KIT}_TARGET_LIBRARIES
   # utilities
   NeuroRobot
   NvidiaAIAAClient
+  workspace_mesh_gen
   # nlohmann_json
   ${Boost_LIBRARIES}
   )
